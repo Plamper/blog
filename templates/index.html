@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero">
+  <h1 id="typewriter"></h1>
+  <p>Just a computer engineering student writing about random things.</p>
+</div>
+
+<hr>
+
+{% set blog = get_section(path="blog/_index.md") %}
+
+<div class="terminal">
+  <div class="terminal-body">
+    <div class="terminal-line">
+      <span class="t-prompt">~ $</span>
+      <span class="t-cmd"> <span class="bash-cmd">ls</span> <span class="bash-flag">-laH</span> <span class="bash-arg">recent/</span></span>
+    </div>
+    <div class="t-total">total {{ blog.pages | slice(end=5) | length }} posts</div>
+    {% for page in blog.pages | slice(end=5) %}
+    <div class="t-row">
+      <span class="t-date">{{ page.date | date(format="%Y-%m-%d") }}</span>
+      <a href="{{ page.permalink | safe }}" class="t-title">{{ page.title }}</a>
+    </div>
+    {% endfor %}
+    <div class="terminal-line t-end">
+      <span class="t-prompt">~ $</span>
+      <span class="t-cursor"></span>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block scripts %}
+<script>
+  const phrases = [
+    "hi, i'm Felix.",
+    "i write about things i find interesting.",
+    "welcome!"
+  ];
+
+  let pi = 0, ci = 0, deleting = false;
+  const el = document.getElementById("typewriter");
+
+  function makeCursor() {
+    return '<span class="cursor"></span>';
+  }
+
+  function tick() {
+    const text = phrases[pi];
+    if (!deleting) {
+      ci++;
+      el.innerHTML = text.slice(0, ci) + makeCursor();
+      if (ci === text.length) {
+        deleting = true;
+        setTimeout(tick, 2000);
+        return;
+      }
+      setTimeout(tick, 65);
+    } else {
+      ci--;
+      el.innerHTML = text.slice(0, ci) + makeCursor();
+      if (ci === 0) {
+        deleting = false;
+        pi = (pi + 1) % phrases.length;
+        setTimeout(tick, 350);
+        return;
+      }
+      setTimeout(tick, 38);
+    }
+  }
+
+  tick();
+</script>
+{% endblock scripts %}

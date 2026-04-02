@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+        <meta
+            name="description"
+            content="{% block description %}{{ config.description }}{% endblock description %}"
+        />
+        <link rel="stylesheet" href="{{ get_url(path='style.css') | safe }}" />
+    </head>
+    <body>
+        <div class="site-wrap">
+            <nav class="site-nav">
+                <a class="name" href="{{ config.base_url | safe }}"
+                    >{{ config.title }}</a
+                >
+                <div class="nav-right">
+                    <ul class="nav-links">
+                        <li>
+                            <a href="{{ get_url(path='') | safe }}">home</a>
+                        </li>
+                        <li>
+                            <a
+                                href="{{ get_url(path='@/blog/_index.md') | safe }}"
+                                >blog</a
+                            >
+                        </li>
+                    </ul>
+                    <ul class="social-links">
+                        <li>
+                            <a
+                                href="https://github.com/plamper"
+                                aria-label="GitHub"
+                                title="GitHub"
+                            >
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"
+                                    />
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="https://linkedin.com/in/felix-plamper"
+                                aria-label="LinkedIn"
+                                title="LinkedIn"
+                            >
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                                    />
+                                    <rect x="2" y="9" width="4" height="12" />
+                                    <circle cx="4" cy="4" r="2" />
+                                </svg>
+                            </a>
+                        </li>
+                        <li>
+                            <a
+                                href="mailto:felix@plamper.org"
+                                aria-label="Email"
+                                title="Email"
+                            >
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
+                                    />
+                                    <polyline points="22,6 12,13 2,6" />
+                                </svg>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            {% block content %}{% endblock content %}
+
+            <footer class="site-footer">
+                built with <a href="https://www.getzola.org">zola</a>
+            </footer>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const copyIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>`;
+                const checkIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="green" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+                document.querySelectorAll(".prose pre").forEach((pre) => {
+                    if (pre.parentNode.classList.contains("code-block")) return;
+
+                    const codeTag = pre.querySelector("code");
+                    const lang =
+                        (codeTag ? codeTag.getAttribute("data-lang") : null) ||
+                        pre.getAttribute("data-lang") ||
+                        "";
+
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "code-block";
+
+                    const header = document.createElement("div");
+                    header.className = "code-header";
+
+                    const langSpan = document.createElement("span");
+                    langSpan.className = "code-lang";
+                    langSpan.textContent = lang.toLowerCase();
+
+                    const copyBtn = document.createElement("button");
+                    copyBtn.className = "code-copy";
+                    copyBtn.innerHTML = copyIcon;
+                    copyBtn.setAttribute("aria-label", "Copy code");
+
+                    copyBtn.addEventListener("click", () => {
+                        const codeText = codeTag
+                            ? codeTag.innerText
+                            : pre.innerText;
+                        navigator.clipboard.writeText(codeText).then(() => {
+                            copyBtn.innerHTML = checkIcon;
+                            setTimeout(() => {
+                                copyBtn.innerHTML = copyIcon;
+                            }, 2000);
+                        });
+                    });
+
+                    header.appendChild(langSpan);
+                    header.appendChild(copyBtn);
+                    pre.parentNode.insertBefore(wrapper, pre);
+                    wrapper.appendChild(header);
+                    wrapper.appendChild(pre);
+                });
+            });
+        </script>
+
+        {% block scripts %}{% endblock scripts %}
+    </body>
+</html>
