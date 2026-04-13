@@ -222,7 +222,7 @@ Since my nextcloud uses oidc for login, nextcloud doesn't know the users passwor
 
 ```
 
-And then if you did everything right you can provision your domain in nextcloud like so:
+And then if you did everything right you can provision your domain in nextcloud under groupware like so:
 
 {{ image(path="images/nextcloud_settings.png", width=400) }}
 
