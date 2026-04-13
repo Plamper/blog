@@ -21,6 +21,22 @@
   --bash-arg:  #C4C9C5;
 }
 
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 1rem 0;
+}
+
+th, td {
+    border: 1px solid #BFAD87; /* Light grey lines */
+    padding: 4px;
+    text-align: left;
+}
+
+th {
+    font-weight: bold;
+}
+
 
 html { font-size: 18px; }
 
@@ -230,7 +246,7 @@ hr {
 }
 
 .post-header h1 {
-  font-size: clamp(1.4rem, 3.5vw, 1.9rem);
+  font-size: clamp(1.4rem, 3.5vw, 2rem);
   font-weight: 500;
   line-height: 1.3;
   color: var(--fg);
@@ -261,6 +277,15 @@ hr {
 
 .prose p      { margin: 1.2rem 0; }
 .prose p:first-child { margin-top: 0; }
+
+.prose h1 {
+  font-size: 1.4rem; /* Down from the browser default of 2rem */
+  font-weight: 500;
+  margin: 3rem 0 1rem;
+  color: var(--fg);
+  border-bottom: 1px solid var(--border); /* Optional: adds a nice terminal-style separator */
+  padding-bottom: 0.3rem;
+}
 
 .prose h2 {
   font-size: 1.15rem;
