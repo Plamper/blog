@@ -3,8 +3,9 @@
 {% block content %}
 <div class="hero">
   <h1 id="typewriter"></h1>
-  <p>Just a computer engineering student writing about random things.</p>
+  <p>Just a computer engineering student writing about random things. Mostly Linux, Nix, Photography and maybe drones.</p>
 </div>
+
 
 <hr>
 
@@ -14,7 +15,7 @@
   <div class="terminal-body">
     <div class="terminal-line">
       <span class="t-prompt">~ $</span>
-      <span class="t-cmd"> <span class="bash-cmd">ls</span> <span class="bash-flag">-laH</span> <span class="bash-arg">recent/</span></span>
+      <span class="t-cmd"> <span class="bash-cmd">ls</span> <span class="bash-flag">-laHt</span> <span class="bash-arg">recent/</span></span>
     </div>
     <div class="t-total">total {{ blog.pages | slice(end=5) | length }} posts</div>
     {% for page in blog.pages | slice(end=5) %}

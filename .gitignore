@@ -7,3 +7,4 @@
 !.dev.vars.example
 .env*
 !.env.example
+/static/processed_images/
