@@ -1,13 +1,16 @@
-+++
-title = "How to setup an email server using nixos on oracle cloud"
-date = 2026-04-13
-+++
+#import "@tola/source:0.0.0": tola-meta
+#import "/site/components.typ": img-box, table-wrap
 
-After I stumbled upon [this lovely guide](https://mtlynch.io/notes/nix-oracle-cloud/) I somehow had a 4 core 24GB Ram server for which I had to find a use case. After I bought the domain of this website I decided to use it for hosting an email server. Since hosting an email server on oracle cloud is not as straight forward as I thought, I decided to write this post.
+#tola-meta((
+  title: "How to setup an email server using nixos on oracle cloud",
+  published: datetime(year: 2026, month: 4, day: 13),
+))
 
-# Setting up the mailserver
+After I stumbled upon #link("https://mtlynch.io/notes/nix-oracle-cloud/")[this lovely guide] I somehow had a 4 core 24GB Ram server for which I had to find a use case. After I bought the domain of this website I decided to use it for hosting an email server. Since hosting an email server on oracle cloud is not as straight forward as I thought, I decided to write this post.
 
-Since setting postfix, dovecot etc. through the official nixos modules is rather cumbersome, I decided to go with a nice flake I found which does most of the heavy lifting: [Simple Nixos Mailserver](https://gitlab.com/simple-nixos-mailserver/nixos-mailserver). So first I added that flake as an input to my servers flake.nix:
+= Setting up the mailserver
+
+Since setting postfix, dovecot etc. through the official nixos modules is rather cumbersome, I decided to go with a nice flake I found which does most of the heavy lifting: #link("https://gitlab.com/simple-nixos-mailserver/nixos-mailserver")[Simple Nixos Mailserver]. So first I added that flake as an input to my servers flake.nix:
 
 ```nix
 {
@@ -93,7 +96,7 @@ But now comes the caveat. Oracle cloud blocks outbound traffic on port 25 by def
 
 The login data can be acquired through oracles ui in the top right under User Settings/Saved Passwords/SMTP credentials. After the login data is set up up go to Developer Services/Email Delivery and create a new domain.
 
-## User management through lldap
+== User management through lldap
 
 Since I don't like SNMs default declarative way of handling accounts and I want to use the same logins for different services like nextcloud as well I decided on going with lldap. Setting up lldap and authelia will be topic of a future post tho. My final setup looked like this, I am using a non-standard attribute for the addresses, since I plan to use the standard email attribute for account reset mails:
 
@@ -127,39 +130,43 @@ Since I don't like SNMs default declarative way of handling accounts and I want 
 }
 ```
 
-## Necessary DNS records
+== Necessary DNS records
 
 Now we need to add all the dns records, so the server is actually discoverable on the internet. Additional records like dkmin, spf and so on are used to validate the ownership of the domain to other servers. The following records need to be added:
 
-{% table() %}
-| Record Type | Name | Value / Points To | Priority |
-| :--- | :--- | :--- | :--- |
-| **A** | mail | [Your Server IP] | — |
-| **MX** | @ | mail.domain.org | 10 |
-| **CNAME** | bounce.fra1 | fra1.rp.oracleemaildelivery.com | - |
-| **CNAME** | dkim.\_domainkey | Whatever oracle cloud tells you in their email delivery web portal | - |
-| **TXT** | @ | "v=spf1 include:eu.rp.oracleemaildelivery.com ~all" | - |
-| **TXT** | \_dmarc | "v=DMARC1; p=none; rua=mailto:[your email]" | - |
-{% end %}
+#table-wrap(caption: "DNS records")[
+  #table(
+    columns: 4,
+    table.header([Record Type], [Name], [Value / Points To], [Priority]),
+    [*A*], [mail], [\[Your Server IP\]], [—],
+    [*MX*], [\@], [mail.domain.org], [10],
+    [*CNAME*], [bounce.fra1], [fra1.rp.oracleemaildelivery.com], [-],
+    [*CNAME*], [dkim.\_domainkey], [Whatever oracle cloud tells you in their email delivery web portal], [-],
+    [*TXT*], [\@], [\"v=spf1 include:eu.rp.oracleemaildelivery.com \~all\"], [-],
+    [*TXT*], [\_dmarc], [\"v=DMARC1; p=none; rua=mailto:\[your email\]\"], [-],
+  )
+]
 
 Do keep in mind that if your server is not located in Frankfurt you need to change the values accordingly. The dmarc record is not technically necessary, but you'll get nice information sent from participating email servers that can help to debug if spf and dkim are set up correctly. Oracle will take a while to see the records propagate so be patient.
 
 You should now be able to login and send a test email.
 
-## Getting Autoconfiguration working in most email clients
+== Getting Autoconfiguration working in most email clients
 
-Some email clients, like evolution, already support autoconfiguration via dns records: 
+Some email clients, like evolution, already support autoconfiguration via dns records:
 
-{% table() %}
-| Record Type | Name | Value / Points To | Priority |
-| :--- | :--- | :--- | :--- |
-| **SRV** | _imaps._tcp | 10 1 993 mail.domain.org | 10 |
-| **SRV** | _submissions._tcp | 10 1 465 mail.domain.org | 10 |
-{% end %}
+#table-wrap(caption: "Autoconfig SRV records")[
+  #table(
+    columns: 4,
+    table.header([Record Type], [Name], [Value / Points To], [Priority]),
+    [*SRV*], [\_imaps.\_tcp], [10 1 993 mail.domain.org], [10],
+    [*SRV*], [\_submissions.\_tcp], [10 1 465 mail.domain.org], [10],
+  )
+]
 
-Most other clients however use a webserver that serves a simple xml file which has the server information inside. Since this is quite tedious to set up you can use [my nixos module](https://github.com/Plamper/nixos-email-autoconfig) which sets up nginx to serve the proper files. Be sure to also create the dns records autoconfig and autodiscover for your domain and point them to the nginx host.
+Most other clients however use a webserver that serves a simple xml file which has the server information inside. Since this is quite tedious to set up you can use #link("https://github.com/Plamper/nixos-email-autoconfig")[my nixos module] which sets up nginx to serve the proper files. Be sure to also create the dns records autoconfig and autodiscover for your domain and point them to the nginx host.
 
-## A few more things that are nice to have
+== A few more things that are nice to have
 
 To block multiple failed login attempts I used fail2ban with it's preconfigured dovecot jail:
 
@@ -177,16 +184,15 @@ To block multiple failed login attempts I used fail2ban with it's preconfigured 
 
     jails = {
       dovecot.settings = {
-        enabled = true; 
+        enabled = true;
         maxretry = 5;
       };
     };
   };
 }
-
 ```
 
-### Backups
+=== Backups
 
 SNM also ships with a convenient backup solution:
 
@@ -203,7 +209,7 @@ SNM also ships with a convenient backup solution:
 }
 ```
 
-### Masterpassword for nextcloud
+=== Masterpassword for nextcloud
 
 Since my nextcloud uses oidc for login, nextcloud doesn't know the users password and therefore autoprovisioning won't work without a master password.
 
@@ -219,13 +225,17 @@ Since my nextcloud uses oidc for login, nextcloud doesn't know the users passwor
     }
   '';
 }
-
 ```
 
 And then if you did everything right you can provision your domain in nextcloud under groupware like so:
 
-{{ image(path="images/nextcloud_settings.png", width=400) }}
+#img-box(
+  "/assets/images/nextcloud_settings.png",
+  width: 440,
+  alt: "Nextcloud groupware mail settings",
+  caption: "Nextcloud Groupware mail settings",
+)
 
-# Conclusion
+= Conclusion
 
-If you have done everything correctly you should have your own mailserver that doesn't end up in the spam folder. I especially enjoy finally being able to use sieve for automatically sorting my mail. You can find the final cleaned up configuration [here](https://github.com/Plamper/nix-nas/blob/main/hosts/cloudnix/mailserver.nix).
+If you have done everything correctly you should have your own mailserver that doesn't end up in the spam folder. I especially enjoy finally being able to use sieve for automatically sorting my mail. You can find the final cleaned up configuration #link("https://github.com/Plamper/nix-nas/blob/main/hosts/cloudnix/mailserver.nix")[here].

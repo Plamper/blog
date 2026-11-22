@@ -1,19 +1,35 @@
 {
   description = "A flake for developing and building my personal blog";
 
-  inputs.nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
-  inputs.flake-utils.url = "github:numtide/flake-utils";
+  inputs = {
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
+    tola.url = "github:tola-rs/tola-ssg";
+  };
 
-  outputs = { self, nixpkgs, flake-utils }:
+  outputs = { self, nixpkgs, flake-utils, tola }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
+        tolaPkg = tola.packages.${system}.default;
       in
       {
-        defaultPackage = self.packages.${system}.website;
-        devShell = pkgs.mkShell {
-          packages = with pkgs; [
-            zola
+        packages.website = pkgs.stdenvNoCC.mkDerivation {
+          pname = "plamper-blog";
+          version = "0.1.0";
+          src = ./.;
+          nativeBuildInputs = [ tolaPkg ];
+          buildPhase = ''
+            tola build --pure
+          '';
+          installPhase = ''
+            cp -r public "$out"
+          '';
+        };
+        packages.default = self.packages.${system}.website;
+        devShells.default = pkgs.mkShell {
+          packages = [
+            tolaPkg
           ];
         };
       }

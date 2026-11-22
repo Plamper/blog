@@ -1,0 +1,24 @@
+# Tola configuration (v0.8.1)
+# https://github.com/tola-rs/tola-ssg
+
+[site]
+origin = "https://plamper.org"
+base-path = "/"
+title = "Plamper.org"
+authors = [{ name = "Felix Plamper", email = "felix@plamper.org" }]
+description = "Personal blog of Felix Plamper — Linux, Nix, photography, and drones."
+languages = []
+language = "en"
+
+[build]
+entry = "site.typ"
+content-dir = "content"
+publish-dir = "public"
+
+[assets]
+cache-busting = false
+trees = [{ source = "static/web-assets", url-prefix = "/assets" }]
+files = [{ source = "static/robots.txt", url = "/robots.txt" }]
+
+[vendor]
+path = "vendor"

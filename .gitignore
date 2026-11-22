@@ -1,5 +1,9 @@
 /.direnv
+/.tola/
+/.tola-build.lock
 /public/
+/.public-publish/
+/.vendor-vendor/
 
 # wrangler files
 .wrangler
@@ -7,4 +11,3 @@
 !.dev.vars.example
 .env*
 !.env.example
-/static/processed_images/
