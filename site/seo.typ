@@ -1,5 +1,7 @@
+#import "@tola/feed:0.0.0": feed
+#import "@tola/head:0.0.0": head-metadata
 #import "@tola/site:0.0.0": site
-#import "@tola/web:0.0.0": feed, head-metadata, sitemap
+#import "@tola/sitemap:0.0.0": sitemap
 
 /// Head metadata entries (`charset`, `viewport`, `title`, `description`).
 #let head-entries(title, description: auto) = {

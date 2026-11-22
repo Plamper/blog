@@ -243,4 +243,4 @@ If you have done everything correctly you should have your own mailserver that d
 
 = Edit 22.11.2026
 
-I recently found #link("https://resend.com/")[Resend], which to me is a lot better than oci email delivery, because it does not automatically inject an unsubcribe link for transactional emails. Also you only need to whitelist a domain and not every single address. The setup is largely the same as with oci. 
+I recently found #link("https://resend.com/")[Resend], which to me is a lot better than oci email delivery, because it does not automatically inject an unsubcribe link for transactional emails. Also you only need to whitelist a domain and not every single address. The setup is largely the same as with oci.
