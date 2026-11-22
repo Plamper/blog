@@ -239,3 +239,8 @@ And then if you did everything right you can provision your domain in nextcloud 
 = Conclusion
 
 If you have done everything correctly you should have your own mailserver that doesn't end up in the spam folder. I especially enjoy finally being able to use sieve for automatically sorting my mail. You can find the final cleaned up configuration #link("https://github.com/Plamper/nix-nas/blob/main/hosts/cloudnix/mailserver.nix")[here].
+
+
+= Edit 22.11.2026
+
+I recently found #link("https://resend.com/")[Resend], which to me is a lot better than oci email delivery, because it does not automatically inject an unsubcribe link for transactional emails. Also you only need to whitelist a domain and not every single address. The setup is largely the same as with oci. 
