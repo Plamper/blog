@@ -31,13 +31,15 @@ jobs:
       - name: Cache Nix store
         uses: nix-community/cache-nix-action@v7
         with:
-          primary-key: ${{ runner.os }}-nix-${{ hashFiles('flake.lock') }}
+          primary-key: ${{ runner.os }}-nix-v2-${{ hashFiles('flake.lock') }}
           restore-prefixes-first-match: |
-            ${{ runner.os }}-nix-
-          gc-max-store-size-linux: 4G
+            ${{ runner.os }}-nix-v2-
+          gc-max-store-size-linux: 512M
 
       - name: Build site with Nix flake
         run: |
+          # Keep `tola` as a GC root so cache GC drops Rust build deps while keeping the `tola` binary
+          nix build .#tola --out-link result-tola
           nix build
           rm -rf public
           cp -rL result public

@@ -14,12 +14,14 @@
         tolaPkg = tola.packages.${system}.default;
       in
       {
+        packages.tola = tolaPkg;
         packages.website = pkgs.stdenvNoCC.mkDerivation {
           pname = "plamper-blog";
           version = "0.1.0";
           src = ./.;
           nativeBuildInputs = [ tolaPkg ];
           buildPhase = ''
+            rm -rf public
             tola build --pure
           '';
           installPhase = ''
