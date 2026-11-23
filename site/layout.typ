@@ -158,7 +158,6 @@ document.addEventListener("DOMContentLoaded", () => {
             #html.a(class: "name", href: route-url("/"))[#site.title]
             #html.div(class: "nav-right")[
               #html.ul(class: "nav-links")[
-                #html.li[#html.a(href: route-url("/"))[home]]
                 #html.li[#html.a(href: route-url("/blog/"))[blog]]
               ]
               #html.ul(class: "social-links")[
